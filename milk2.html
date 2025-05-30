@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ATS Admin Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <sgitcript src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
   <style>
     body {
       margin: 0;
@@ -80,16 +80,26 @@
       color: white;
       width: 230px;
       min-height: 100vh;
-      padding: 20px 10px;
+      padding: 20px 15px;
+      box-sizing: border-box;
+      position: sticky;
+      top: 0;
+      align-self: flex-start;
+    }
+
+    .sidebar .menu {
+      padding: 0;
+      margin: 0;
     }
 
     .sidebar .menu li {
-      margin: 15px 0;
+      margin: 10px 0;
       list-style: none;
       cursor: pointer;
-      padding: 10px;
+      padding: 12px 15px;
       border-radius: 8px;
       transition: background 0.3s;
+      font-size: 14px;
     }
 
     .sidebar .menu li:hover {
@@ -103,7 +113,10 @@
 
     main.main {
       flex: 1;
-      padding: 30px;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+      box-sizing: border-box;
     }
 
     .filters {
@@ -135,7 +148,6 @@
       padding: 20px;
       border-radius: 12px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-      position: relative;
       text-align: center;
       cursor: pointer;
       transition: transform 0.2s, box-shadow 0.2s;
@@ -161,8 +173,9 @@
     }
 
     .chart-container {
-      max-width: 100px;
-      margin: 0 auto;
+      max-width: 600px;
+      height: 300px;
+      margin: 20px auto;
     }
 
     .section-content {
@@ -172,6 +185,8 @@
       border-radius: 8px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.05);
       margin-top: 20px;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .section-content.active {
@@ -180,9 +195,10 @@
 
     .section-content h2 {
       color: #005baa;
-      margin-top: 0;
+      margin: 0 0 15px 0;
       border-bottom: 1px solid #eee;
       padding-bottom: 10px;
+      font-size: 24px;
     }
 
     .section-content .stats {
@@ -197,18 +213,7 @@
       padding: 15px;
       border-radius: 6px;
       border-left: 4px solid #0196d0;
-    }
-
-    .stat-item h3 {
-      margin: 0 0 5px 0;
-      font-size: 16px;
-    }
-
-    .stat-item p {
-      margin: 0;
-      font-size: 24px;
-      font-weight: bold;
-      color: #005baa;
+      text-align: center;
     }
 
     .section-content .cards {
@@ -224,65 +229,50 @@
       color: #000;
     }
 
-    #quality-control-content .card {
-      background: #e8f0fe;
-    }
-    #product-inventory-content .card {
-      background: #e0f7e9;
-    }
-    #distribution-logistics-content .card {
-      background: #fce5cd;
-    }
-    #retail-franchise-content .card {
-      background: #d6eaff;
-    }
+    #quality-control-content .card { background: #e8f0fe; }
+    #product-inventory-content .card { background: #e0f7e9; }
+    #distribution-logistics-content .card { background: #fce5cd; }
+    #retail-franchise-content .card { background: #d6eaff; }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 10px;
+      margin: 20px 0;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
     thead {
       background-color: #dbe9fd;
     }
 
-    #quality-control-content thead {
-      background-color: #dbe9fd;
-    }
-    #product-inventory-content thead {
-      background-color: #c8f7d4;
-    }
-    #distribution-logistics-content thead {
-      background-color: #f9d5a7;
-    }
-    #retail-franchise-content thead {
-      background-color: #cce4ff;
-    }
+    #quality-control-content thead { background-color: #dbe9fd; }
+    #product-inventory-content thead { background-color: #c8f7d4; }
+    #distribution-logistics-content thead { background-color: #f9d5a7; }
+    #retail-franchise-content thead { background-color: #cce4ff; }
 
     th, td {
-      padding: 8px;
+      padding: 12px;
       border: 1px solid #ccc;
       text-align: left;
     }
 
-    .status-pass {
-      color: green;
-      font-weight: 600;
-    }
-    .status-borderline {
-      color: orange;
-      font-weight: 600;
-    }
-    .status-fail {
-      color: red;
-      font-weight: 600;
+    th {
+      background: #007bff;
+      color: white;
     }
 
-    .section-content .chart-container {
-      margin-top: 25px;
-      max-width: 600px;
+    tr:nth-child(even) {
+      background: #f8f9fa;
     }
+
+    tr:hover {
+      background: #e9ecef;
+      cursor: pointer;
+    }
+
+    .status-pass { color: green; font-weight: 600; }
+    .status-borderline { color: orange; font-weight: 600; }
+    .status-fail { color: red; font-weight: 600; }
 
     .milk-collection-content .tabs {
       display: flex;
@@ -400,6 +390,121 @@
     .milk-collection-content .grade-a { background: #4caf50; }
     .milk-collection-content .grade-b { background: #ffeb3b; }
     .milk-collection-content .grade-c { background: #f44336; }
+
+    #processing-plants-content .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    #processing-plants-content .stat-item {
+      background-color: #f9f9f9;
+      padding: 15px;
+      border-radius: 6px;
+      border-left: 4px solid #0196d0;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s, opacity 0.2s;
+    }
+
+    #processing-plants-content .stat-item:hover {
+      transform: scale(1.05);
+      opacity: 0.9;
+    }
+
+    #processing-plants-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    #processing-plants-content th,
+    #processing-plants-content td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    #processing-plants-content th {
+      background: #007bff;
+      color: white;
+    }
+
+    #processing-plants-content tr:nth-child(even) {
+      background: #f8f9fa;
+    }
+
+    #processing-plants-content tr:hover {
+      background: #e9ecef;
+      cursor: pointer;
+    }
+
+    #processing-plants-content tr.highlighted {
+      background: #d1e7ff !important;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .controls button {
+      padding: 10px 20px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .controls button:hover {
+      background: #0056b3;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+
+      aside.sidebar {
+        width: 100%;
+        min-height: auto;
+        padding: 15px;
+        position: relative;
+      }
+
+      .sidebar .menu {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .sidebar .menu li {
+        flex: 1 1 auto;
+        text-align: center;
+        padding: 10px;
+      }
+
+      main.main {
+        padding: 15px;
+      }
+
+      .section-content .stats {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      }
+
+      .chart-container {
+        height: 200px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -538,7 +643,7 @@
           <li>Monitor farmer training programs</li>
           <li>Generate reports on farmer performance</li>
         </ul>
-        <div style="height: 300px; margin-top: 20px;">
+        <div class="chart-container">
           <canvas id="farmerChart"></canvas>
         </div>
       </div>
@@ -898,389 +1003,88 @@
           <li>Transfer to processing plants</li>
           <li>Energy consumption tracking</li>
         </ul>
-        <div style="height: 300px; margin-top: 20px;">
+        <div class="chart-container">
           <canvas id="chillingChart"></canvas>
         </div>
       </div>
 
       <!-- Processing Plants Content -->
-     <div id="processing-plants-content" class="section-content">
-  <h2>Processing Plants</h2>
-  <div class="stats" id="statsContainer">
-    <div class="stat-item" onclick="showDetails('totalPlants')" style="background: #28a745; color: white;">
-      <h3>Total Plants</h3>
-      <p>3</p>
-    </div>
-    <div class="stat-item" onclick="showDetails('dailyProcessing')" style="background: #007bff; color: white;">
-      <h3>Daily Processing</h3>
-      <p>180,000 L</p>
-    </div>
-    <div class="stat-item" onclick="showDetails('productTypes')" style="background: #dc3545; color: white;">
-      <h3>Product Types</h3>
-      <p>15</p>
-    </div>
-    <div class="stat-item" onclick="showDetails('efficiency')" style="background: #ffc107; color: black;">
-      <h3>Efficiency</h3>
-      <p>92%</p>
-    </div>
-  </div>
-  <p>Oversee milk processing operations and production metrics:</p>
-  <ul>
-    <li>Production line monitoring</li>
-    <li>Batch processing tracking</li>
-    <li>Equipment maintenance</li>
-    <li>Staff scheduling</li>
-    <li>Quality control checks</li>
-  </ul>
-  <h3>Plant Details</h3>
-  <table id="plantTable">
-    <thead>
-      <tr>
-        <th>Plant</th>
-        <th>Location</th>
-        <th>Daily Capacity (L)</th>
-        <th>Product Types</th>
-        <th>Efficiency</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr onclick="highlightRow(this, 'Plant A')">
-        <td>Plant A</td>
-        <td>North Valley</td>
-        <td>60,000</td>
-        <td>8</td>
-        <td>93%</td>
-      </tr>
-      <tr onclick="highlightRow(this, 'Plant B')">
-        <td>Plant B</td>
-        <td>East Hills</td>
-        <td>70,000</td>
-        <td>10</td>
-        <td>91%</td>
-      </tr>
-      <tr onclick="highlightRow(this, 'Plant C')">
-        <td>Plant C</td>
-        <td>South Plains</td>
-        <td>50,000</td>
-        <td>7</td>
-        <td>92%</td>
-      </tr>
-    </tbody>
-  </table>
-  <div class="controls" style="margin: 20px 0;">
-    <button id="productionSummaryBtn">Production Summary</button>
-    <button id="qualityControlBtn">Quality Control Report</button>
-  </div>
-  <div class="chart-container">
-    <canvas id="processingChart"></canvas>
-  </div>
-  <div id="detailsContainer" style="margin-top: 20px; display: none;">
-    <h3>Details</h3>
-    <div id="dynamicDetailsSection" class="hidden"></div>
-  </div>
-</div>
-
-<style>
-  .section-content {
-    font-family: Arial, sans-serif;
-    max-width: 1000px; /* Consistent width */
-    margin: 0 auto; /* Center content */
-    padding: 20px;
-  }
-  .stats {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    margin-bottom: 20px;
-    width: 100%;
-  }
-  .stat-item {
-    flex: 1;
-    padding: 15px;
-    border-radius: 8px;
-    text-align: center;
-    cursor: pointer;
-    transition: transform 0.2s, opacity 0.2s;
-  }
-  .stat-item:hover {
-    transform: scale(1.05);
-    opacity: 0.9;
-  }
-  .controls {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    width: 100%;
-  }
-  .controls button {
-    padding: 10px 20px;
-    background: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  .controls button:hover {
-    background: #0056b3;
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  }
-  th, td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-  }
-  th {
-    background: #007bff;
-    color: white;
-  }
-  tr:nth-child(even) {
-    background: #f8f9fa;
-  }
-  tr:hover {
-    background: #e9ecef;
-    cursor: pointer;
-  }
-  tr.highlighted {
-    background: #d1e7ff !important;
-  }
-  .chart-container {
-    height: 300px;
-    width: 100%;
-    margin-top: 20px;
-  }
-  .hidden {
-    display: none;
-  }
-</style>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-  let processingChart;
-
-  const chartData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-    datasets: [{
-      label: 'Processing Volume (L)',
-      data: [150000, 160000, 170000, 175000, 180000, 185000],
-      backgroundColor: 'rgba(0, 123, 255, 0.5)',
-      borderColor: 'rgba(0, 123, 255, 1)',
-      borderWidth: 1
-    }]
-  };
-
-  function initChart() {
-    const ctx = document.getElementById('processingChart').getContext('2d');
-    processingChart = new Chart(ctx, {
-      type: 'bar',
-      data: chartData,
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          tooltip: {
-            enabled: true,
-            callbacks: {
-              label: function(context) {
-                return `${context.dataset.label}: ${context.parsed.y.toLocaleString()} L`;
-              }
-            }
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            title: { display: true, text: 'Volume (Liters)' }
-          }
-        }
-      }
-    });
-  }
-
-  function showDetails(type) {
-    const detailsContainer = document.getElementById('detailsContainer');
-    const dynamicDetailsSection = document.getElementById('dynamicDetailsSection');
-    let details = '';
-
-    switch(type) {
-      case 'totalPlants':
-        details = 'Three processing plants located in strategic regions to optimize distribution.';
-        break;
-      case 'dailyProcessing':
-        details = 'Processing capacity of 180,000 liters per day across all facilities.';
-        break;
-      case 'productTypes':
-        details = '15 unique dairy products including milk, cheese, yogurt, and butter.';
-        break;
-      case 'efficiency':
-        details = '92% operational efficiency achieved through automated systems and quality controls.';
-        break;
-    }
-
-    dynamicDetailsSection.innerHTML = `<p class="text-gray-700">${details}</p>`;
-    dynamicDetailsSection.classList.remove('hidden');
-    detailsContainer.style.display = 'block';
-  }
-
-  function highlightRow(row, plantName) {
-    clearHighlightedRows();
-    row.classList.add('highlighted');
-    showDetails('plant' + plantName.replace(/\s/g, ''));
-  }
-
-  function clearHighlightedRows() {
-    const rows = document.querySelectorAll('#plantTable tr');
-    rows.forEach(row => row.classList.remove('highlighted'));
-  }
-
-  // Production Summary Button Handler
-  const productionSummaryBtn = document.getElementById('productionSummaryBtn');
-  if (productionSummaryBtn) {
-    productionSummaryBtn.addEventListener('click', () => {
-      const dynamicDetailsSection = document.getElementById('dynamicDetailsSection');
-      dynamicDetailsSection.innerHTML = ''; // Clear previous content
-      dynamicDetailsSection.classList.remove('hidden'); // Ensure section is visible
-      document.getElementById('detailsContainer').style.display = 'block';
-
-      dynamicDetailsSection.innerHTML = `
-        <h4 class="text-xl font-semibold text-indigo-800 mb-4 text-center">Overall Production Summary</h4>
-        <div class="bg-white p-4 rounded-lg shadow-sm text-gray-700 mb-4">
-          <p class="mb-2">This summary provides an overview of total production volumes across all plants.</p>
-          <p><strong>Total Production YTD:</strong> 1,500,000 L</p>
+      <div id="processing-plants-content" class="section-content">
+        <h2>Processing Plants</h2>
+        <div class="stats">
+          <div class="stat-item" onclick="showDetails('totalPlants')">
+            <h3>Total Plants</h3>
+            <p>3</p>
+          </div>
+          <div class="stat-item" onclick="showDetails('dailyProcessing')">
+            <h3>Daily Processing</h3>
+            <p>180,000 L</p>
+          </div>
+          <div class="stat-item" onclick="showDetails('productTypes')">
+            <h3>Product Types</h3>
+            <p>15</p>
+          </div>
+          <div class="stat-item" onclick="showDetails('efficiency')">
+            <h3>Efficiency</h3>
+            <p>92%</p>
+          </div>
         </div>
-        <h5 class="text-lg font-semibold text-gray-700 mb-2">Quarterly Production Volume (L)</h5>
-        <table class="min-w-full bg-white border border-gray-200 rounded-md mb-4">
+        <p>Oversee milk processing operations and production metrics:</p>
+        <ul>
+          <li>Production line monitoring</li>
+          <li>Batch processing tracking</li>
+          <li>Equipment maintenance</li>
+          <li>Staff scheduling</li>
+          <li>Quality control checks</li>
+        </ul>
+        <h3>Plant Details</h3>
+        <table id="plantTable">
           <thead>
             <tr>
-              <th class="py-2 px-4 border-b">Quarter</th>
-              <th class="py-2 px-4 border-b">Volume (L)</th>
+              <th>Plant</th>
+              <th>Location</th>
+              <th>Daily Capacity (L)</th>
+              <th>Product Types</th>
+              <th>Efficiency</th>
             </tr>
           </thead>
           <tbody>
-            <tr><td class="py-2 px-4 border-b">Q1 2024</td><td class="py-2 px-4 border-b">450,000</td></tr>
-            <tr><td class="py-2 px-4 border-b">Q2 2024</td><td class="py-2 px-4 border-b">520,000</td></tr>
-            <tr><td class="py-2 px-4 border-b">Q3 2024</td><td class="py-2 px-4 border-b">530,000</td></tr>
-            <tr><td class="py-2 px-4 border-b">Q4 2024 (Est.)</td><td class="py-2 px-4 border-b">550,000</td></tr>
-          </tbody>
-        </table>
-        <h5 class="text-lg font-semibold text-gray-700 mb-2">Quarterly Production Trend</h5>
-        <div style="height: 250px;"><canvas id="quarterlyProductionChart"></canvas></div>
-      `;
-
-      setTimeout(() => {
-        const ctx = document.getElementById('quarterlyProductionChart').getContext('2d');
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: ['Q1 2024', 'Q2 2024', 'Q3 2024', 'Q4 2024 (Est.)'],
-            datasets: [{
-              label: 'Production Volume (L)',
-              data: [450000, 520000, 530000, 550000],
-              borderColor: 'rgb(102, 51, 153)',
-              backgroundColor: 'rgba(102, 51, 153, 0.2)',
-              tension: 0.3,
-              fill: true
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              y: { beginAtZero: true, title: { display: true, text: 'Volume (L)' } },
-              x: { title: { display: true, text: 'Quarter' } }
-            },
-            plugins: {
-              legend: { display: true },
-              title: { display: true, text: 'Quarterly Production Trend' }
-            }
-          }
-        });
-      }, 50);
-    });
-  }
-
-  // Quality Control Button Handler
-  const qualityControlBtn = document.getElementById('qualityControlBtn');
-  if (qualityControlBtn) {
-    qualityControlBtn.addEventListener('click', () => {
-      const dynamicDetailsSection = document.getElementById('dynamicDetailsSection');
-      dynamicDetailsSection.innerHTML = ''; // Clear previous content
-      dynamicDetailsSection.classList.remove('hidden'); // Ensure section is visible
-      document.getElementById('detailsContainer').style.display = 'block';
-
-      dynamicDetailsSection.innerHTML = `
-        <h4 class="text-xl font-semibold text-red-800 mb-4 text-center">Quality Control Report</h4>
-        <div class="bg-white p-4 rounded-lg shadow-sm text-gray-700 mb-4">
-          <p class="mb-2">This report summarizes key quality control metrics and recent inspection findings.</p>
-          <p><strong>Overall Pass Rate:</strong> 98.5%</p>
-          <p><strong>Last Audit Date:</strong> 2025-05-20</p>
-        </div>
-        <h5 class="text-lg font-semibold text-gray-700 mb-2">Recent Inspection Results</h5>
-        <table class="min-w-full bg-white border border-gray-200 rounded-md mb-4">
-          <thead>
-            <tr>
-              <th class="py-2 px-4 border-b">Batch ID</th>
-              <th class="py-2 px-4 border-b">Product</th>
-              <th class="py-2 px-4 border-b">Status</th>
-              <th class="py-2 px-4 border-b">Defects</th>
+            <tr onclick="highlightRow(this, 'Plant A')">
+              <td>Plant A</td>
+              <td>North Valley</td>
+              <td>60,000</td>
+              <td>8</td>
+              <td>93%</td>
             </tr>
-          </thead>
-          <tbody>
-            <tr><td class="py-2 px-4 border-b">B20250525-001</td><td class="py-2 px-4 border-b">Milk (Whole)</td><td class="py-2 px-4 border-b text-green-600">Passed</td><td class="py-2 px-4 border-b">None</td></tr>
-            <tr><td class="py-2 px-4 border-b">B20250524-005</td><td class="py-2 px-4 border-b">Yogurt (Plain)</td><td class="py-2 px-4 border-b text-green-600">Passed</td><td class="py-2 px-4 border-b">None</td></tr>
-            <tr><td class="py-2 px-4 border-b">B20250523-010</td><td class="py-2 px-4 border-b">Orange Juice</td><td class="py-2 px-4 border-b text-red-600">Failed</td><td class="py-2 px-4 border-b">High Acidity</td></tr>
-            <tr><td class="py-2 px-4 border-b">B20250522-003</td><td class="py-2 px-4 border-b">Cheese (Cheddar)</td><td class="py-2 px-4 border-b text-green-600">Passed</td><td class="py-2 px-4 border-b">None</td></tr>
+            <tr onclick="highlightRow(this, 'Plant B')">
+              <td>Plant B</td>
+              <td>East Hills</td>
+              <td>70,000</td>
+              <td>10</td>
+              <td>91%</td>
+            </tr>
+            <tr onclick="highlightRow(this, 'Plant C')">
+              <td>Plant C</td>
+              <td>South Plains</td>
+              <td>50,000</td>
+              <td>7</td>
+              <td>92%</td>
+            </tr>
           </tbody>
         </table>
-        <h5 class="text-lg font-semibold text-gray-700 mb-2">Defect Categories (Last 30 Days)</h5>
-        <div style="height: 250px;"><canvas id="defectCategoriesChart"></canvas></div>
-      `;
+        <div class="controls">
+          <button id="productionSummaryBtn">Production Summary</button>
+          <button id="qualityControlBtn">Quality Control Report</button>
+        </div>
+        <div class="chart-container">
+          <canvas id="processingChart"></canvas>
+        </div>
+        <div id="detailsContainer" style="margin-top: 20px; display: none;">
+          <h3>Details</h3>
+          <div id="dynamicDetailsSection" class="hidden"></div>
+        </div>
+      </div>
 
-      setTimeout(() => {
-        const ctx = document.getElementById('defectCategoriesChart').getContext('2d');
-        new Chart(ctx, {
-          type: 'pie',
-          data: {
-            labels: ['Packaging', 'Flavor/Taste', 'Consistency', 'Contamination', 'Other'],
-            datasets: [{
-              data: [15, 10, 5, 2, 3],
-              backgroundColor: [
-                'rgba(255, 99, 132, 0.7)', // Red
-                'rgba(54, 162, 235, 0.7)', // Blue
-                'rgba(255, 206, 86, 0.7)', // Yellow
-                'rgba(75, 192, 192, 0.7)', // Green
-                'rgba(153, 102, 255, 0.7)' // Purple
-              ],
-              borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)'
-              ],
-              borderWidth: 1
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: { position: 'right' },
-              title: { display: true, text: 'Defect Categories' }
-            }
-          }
-        });
-      }, 50);
-    });
-  }
-
-  // Initialize chart on page load
-  window.onload = initChart;
-</script>
       <!-- Quality Control Content -->
       <div id="quality-control-content" class="section-content">
         <h2>Quality Control</h2>
@@ -1554,6 +1358,81 @@
       });
     }
 
+    // Processing Plants Chart
+    function initProcessingChart() {
+      const ctx = document.getElementById('processingChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+          datasets: [{
+            label: 'Processing Volume (L)',
+            data: [150000, 160000, 170000, 175000, 180000, 185000],
+            backgroundColor: 'rgba(0, 123, 255, 0.5)',
+            borderColor: 'rgba(0, 123, 255, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            tooltip: {
+              enabled: true,
+              callbacks: {
+                label: function(context) {
+                  return `${context.dataset.label}: ${context.parsed.y.toLocaleString()} L`;
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: { display: true, text: 'Volume (Liters)' }
+            }
+          }
+        }
+      });
+    }
+
+    // Processing Plants Details
+    function showDetails(type) {
+      const detailsContainer = document.getElementById('detailsContainer');
+      const dynamicDetailsSection = document.getElementById('dynamicDetailsSection');
+      let details = '';
+
+      switch(type) {
+        case 'totalPlants':
+          details = 'Three processing plants located in strategic regions to optimize distribution.';
+          break;
+        case 'dailyProcessing':
+          details = 'Processing capacity of 180,000 liters per day across all facilities.';
+          break;
+        case 'productTypes':
+          details = '15 unique dairy products including milk, cheese, yogurt, and butter.';
+          break;
+        case 'efficiency':
+          details = '92% operational efficiency achieved through automated systems and quality controls.';
+          break;
+      }
+
+      dynamicDetailsSection.innerHTML = `<p class="text-gray-700">${details}</p>`;
+      dynamicDetailsSection.classList.remove('hidden');
+      detailsContainer.style.display = 'block';
+    }
+
+    function highlightRow(row, plantName) {
+      clearHighlightedRows();
+      row.classList.add('highlighted');
+      showDetails('plant' + plantName.replace(/\s/g, ''));
+    }
+
+    function clearHighlightedRows() {
+      const rows = document.querySelectorAll('#plantTable tr');
+      rows.forEach(row => row.classList.remove('highlighted'));
+    }
+
     // Initialize all charts and sidebar functionality
     document.addEventListener('DOMContentLoaded', function() {
       // Dashboard gauges
@@ -1605,24 +1484,7 @@
       }
 
       // Processing Plants Chart
-      const processingChart = document.getElementById('processingChart');
-      if (processingChart) {
-        new Chart(processingChart, {
-          type: 'radar',
-          data: {
-            labels: ['Pasteurization', 'Homogenization', 'Packaging', 'Quality', 'Efficiency', 'Output'],
-            datasets: [{
-              label: 'Plant Performance',
-              data: [95, 92, 90, 97, 88, 94],
-              backgroundColor: 'rgba(0, 151, 208, 0.2)',
-              borderColor: '#0097d0'
-            }]
-          },
-          options: {
-            responsive: true
-          }
-        });
-      }
+      initProcessingChart();
 
       // Quality Control Chart
       const qcChart = document.getElementById('qualityControlChart');
@@ -1769,6 +1631,147 @@
           }
         });
       });
+
+      // Production Summary Button Handler
+      const productionSummaryBtn = document.getElementById('productionSummaryBtn');
+      if (productionSummaryBtn) {
+        productionSummaryBtn.addEventListener('click', () => {
+          const dynamicDetailsSection = document.getElementById('dynamicDetailsSection');
+          dynamicDetailsSection.innerHTML = '';
+          dynamicDetailsSection.classList.remove('hidden');
+          document.getElementById('detailsContainer').style.display = 'block';
+
+          dynamicDetailsSection.innerHTML = `
+            <h4 class="text-xl font-semibold text-indigo-800 mb-4 text-center">Overall Production Summary</h4>
+            <div class="bg-white p-4 rounded-lg shadow-sm text-gray-700 mb-4">
+              <p class="mb-2">This summary provides an overview of total production volumes across all plants.</p>
+              <p><strong>Total Production YTD:</strong> 1,500,000 L</p>
+            </div>
+            <h5 class="text-lg font-semibold text-gray-700 mb-2">Quarterly Production Volume (L)</h5>
+            <table class="min-w-full bg-white border border-gray-200 rounded-md mb-4">
+              <thead>
+                <tr>
+                  <th class="py-2 px-4 border-b">Quarter</th>
+                  <th class="py-2 px-4 border-b">Volume (L)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td class="py-2 px-4 border-b">Q1 2024</td><td class="py-2 px-4 border-b">450,000</td></tr>
+                <tr><td class="py-2 px-4 border-b">Q2 2024</td><td class="py-2 px-4 border-b">520,000</td></tr>
+                <tr><td class="py-2 px-4 border-b">Q3 2024</td><td class="py-2 px-4 border-b">530,000</td></tr>
+                <tr><td class="py-2 px-4 border-b">Q4 2024 (Est.)</td><td class="py-2 px-4 border-b">550,000</td></tr>
+              </tbody>
+            </table>
+            <h5 class="text-lg font-semibold text-gray-700 mb-2">Quarterly Production Trend</h5>
+            <div style="height: 250px;"><canvas id="quarterlyProductionChart"></canvas></div>
+          `;
+
+          setTimeout(() => {
+            const ctx = document.getElementById('quarterlyProductionChart').getContext('2d');
+            new Chart(ctx, {
+              type: 'line',
+              data: {
+                labels: ['Q1 2024', 'Q2 2024', 'Q3 2024', 'Q4 2024 (Est.)'],
+                datasets: [{
+                  label: 'Production Volume (L)',
+                  data: [450000, 520000, 530000, 550000],
+                  borderColor: 'rgb(102, 51, 153)',
+                  backgroundColor: 'rgba(102, 51, 153, 0.2)',
+                  tension: 0.3,
+                  fill: true
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                  y: { beginAtZero: true, title: { display: true, text: 'Volume (L)' } },
+                  x: { title: { display: true, text: 'Quarter' } }
+                },
+                plugins: {
+                  legend: { display: true },
+                  title: { display: true, text: 'Quarterly Production Trend' }
+                }
+              }
+            });
+          }, 50);
+        });
+      }
+
+      // Quality Control Button Handler
+      const qualityControlBtn = document.getElementById('qualityControlBtn');
+      if (qualityControlBtn) {
+        qualityControlBtn.addEventListener('click', () => {
+          const dynamicDetailsSection = document.getElementById('dynamicDetailsSection');
+          dynamicDetailsSection.innerHTML = '';
+          dynamicDetailsSection.classList.remove('hidden');
+          document.getElementById('detailsContainer').style.display = 'block';
+
+          dynamicDetailsSection.innerHTML = `
+            <h4 class="text-xl font-semibold text-red-800 mb-4 text-center">Quality Control Report</h4>
+            <div class="bg-white p-4 rounded-lg shadow-sm text-gray-700 mb-4">
+              <p class="mb-2">This report summarizes key quality control metrics and recent inspection findings.</p>
+              <p><strong>Overall Pass Rate:</strong> 98.5%</p>
+              <p><strong>Last Audit Date:</strong> 2025-05-20</p>
+            </div>
+            <h5 class="text-lg font-semibold text-gray-700 mb-2">Recent Inspection Results</h5>
+            <table class="min-w-full bg-white border border-gray-200 rounded-md mb-4">
+              <thead>
+                <tr>
+                  <th class="py-2 px-4 border-b">Batch ID</th>
+                  <th class="py-2 px-4 border-b">Product</th>
+                  <th class="py-2 px-4 border-b">Status</th>
+                  <th class="py-2 px-4 border-b">Defects</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td class="py-2 px-4 border-b">B20250525-001</td><td class="py-2 px-4 border-b">Milk (Whole)</td><td class="py-2 px-4 border-b text-green-600">Passed</td><td class="py-2 px-4 border-b">None</td></tr>
+                <tr><td class="py-2 px-4 border-b">B20250524-005</td><td class="py-2 px-4 border-b">Yogurt (Plain)</td><td class="py-2 px-4 border-b text-green-600">Passed</td><td class="py-2 px-4 border-b">None</td></tr>
+                <tr><td class="py-2 px-4 border-b">B20250523-010</td><td class="py-2 px-4 border-b">Orange Juice</td><td class="py-2 px-4 border-b text-red-600">Failed</td><td class="py-2 px-4 border-b">High Acidity</td></tr>
+                <tr><td class="py-2 px-4 border-b">B20250522-003</td><td class="py-2 px-4 border-b">Cheese (Cheddar)</td><td class="py-2 px-4 border-b text-green-600">Passed</td><td class="py-2 px-4 border-b">None</td></tr>
+              </tbody>
+            </table>
+            <h5 class="text-lg font-semibold text-gray-700 mb-2">Defect Categories (Last 30 Days)</h5>
+            <div style="height: 250px;"><canvas id="defectCategoriesChart"></canvas></div>
+          `;
+
+          setTimeout(() => {
+            const ctx = document.getElementById('defectCategoriesChart').getContext('2d');
+            new Chart(ctx, {
+              type: 'pie',
+              data: {
+                labels: ['Packaging', 'Flavor/Taste', 'Consistency', 'Contamination', 'Other'],
+                datasets: [{
+                  data: [15, 10, 5, 2, 3],
+                  backgroundColor: [
+                    'rgba(255, 99, 132, 0.7)',
+                    'rgba(54, 162, 235, 0.7)',
+                    'rgba(255, 206, 86, 0.7)',
+                    'rgba(75, 192, 192, 0.7)',
+                    'rgba(153, 102, 255, 0.7)'
+                  ],
+                  borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)'
+                  ],
+                  borderWidth: 1
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: { position: 'right' },
+                  title: { display: true, text: 'Defect Categories' }
+                }
+              }
+            });
+          }, 50);
+        });
+      }
     });
   </script>
 </body>
