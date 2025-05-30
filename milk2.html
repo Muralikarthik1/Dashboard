@@ -1,0 +1,1775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ATS Admin Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <sgitcript src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #f4f7fa;
+    }
+
+    .top-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 30px;
+      background-color: white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .top-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .top-left img.logo {
+      height: 50px;
+      margin-right: 10px;
+    }
+
+    .top-center {
+      flex: 1;
+      text-align: center;
+    }
+
+    .search-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+
+    .search {
+      padding: 8px 30px 8px 10px;
+      width: 250px;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+    }
+
+    .search-icon {
+      position: absolute;
+      right: 10px;
+      top: 8px;
+    }
+
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .profile img {
+      border-radius: 50%;
+    }
+
+    .container {
+      display: flex;
+    }
+
+    aside.sidebar {
+      background: linear-gradient(180deg, #005baa, #0196d0);
+      color: white;
+      width: 230px;
+      min-height: 100vh;
+      padding: 20px 10px;
+    }
+
+    .sidebar .menu li {
+      margin: 15px 0;
+      list-style: none;
+      cursor: pointer;
+      padding: 10px;
+      border-radius: 8px;
+      transition: background 0.3s;
+    }
+
+    .sidebar .menu li:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .sidebar .menu li.active {
+      background-color: rgba(255, 255, 255, 0.3);
+      font-weight: bold;
+    }
+
+    main.main {
+      flex: 1;
+      padding: 30px;
+    }
+
+    .filters {
+      margin-bottom: 20px;
+    }
+
+    .filters button {
+      padding: 8px 14px;
+      margin-right: 10px;
+      border: none;
+      border-radius: 6px;
+      background-color: #e0e0e0;
+      cursor: pointer;
+    }
+
+    .filters button.active {
+      background-color: #0196d0;
+      color: white;
+    }
+
+    section.cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background-color: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      position: relative;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .card.active {
+      border: 2px solid #0196d0;
+    }
+
+    .card .value {
+      font-size: 24px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .card .change.up {
+      color: green;
+    }
+
+    .chart-container {
+      max-width: 100px;
+      margin: 0 auto;
+    }
+
+    .section-content {
+      display: none;
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      margin-top: 20px;
+    }
+
+    .section-content.active {
+      display: block;
+    }
+
+    .section-content h2 {
+      color: #005baa;
+      margin-top: 0;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+
+    .section-content .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    .stat-item {
+      background-color: #f9f9f9;
+      padding: 15px;
+      border-radius: 6px;
+      border-left: 4px solid #0196d0;
+    }
+
+    .stat-item h3 {
+      margin: 0 0 5px 0;
+      font-size: 16px;
+    }
+
+    .stat-item p {
+      margin: 0;
+      font-size: 24px;
+      font-weight: bold;
+      color: #005baa;
+    }
+
+    .section-content .cards {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 15px;
+    }
+
+    .section-content .card {
+      flex: 1;
+      padding: 15px;
+      border-radius: 6px;
+      color: #000;
+    }
+
+    #quality-control-content .card {
+      background: #e8f0fe;
+    }
+    #product-inventory-content .card {
+      background: #e0f7e9;
+    }
+    #distribution-logistics-content .card {
+      background: #fce5cd;
+    }
+    #retail-franchise-content .card {
+      background: #d6eaff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    thead {
+      background-color: #dbe9fd;
+    }
+
+    #quality-control-content thead {
+      background-color: #dbe9fd;
+    }
+    #product-inventory-content thead {
+      background-color: #c8f7d4;
+    }
+    #distribution-logistics-content thead {
+      background-color: #f9d5a7;
+    }
+    #retail-franchise-content thead {
+      background-color: #cce4ff;
+    }
+
+    th, td {
+      padding: 8px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+
+    .status-pass {
+      color: green;
+      font-weight: 600;
+    }
+    .status-borderline {
+      color: orange;
+      font-weight: 600;
+    }
+    .status-fail {
+      color: red;
+      font-weight: 600;
+    }
+
+    .section-content .chart-container {
+      margin-top: 25px;
+      max-width: 600px;
+    }
+
+    .milk-collection-content .tabs {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .milk-collection-content .tab {
+      background: #e0e0e0;
+      padding: 10px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .milk-collection-content .tab.active {
+      background: #2196f3;
+      color: white;
+    }
+
+    .milk-collection-content .tab-section {
+      display: none;
+    }
+
+    .milk-collection-content .tab-section.active {
+      display: block;
+    }
+
+    .milk-collection-content .metrics {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin-bottom: 30px;
+    }
+
+    .milk-collection-content .metric {
+      flex: 1 1 200px;
+      margin: 10px;
+      padding: 20px;
+      border-radius: 10px;
+      color: white;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .milk-collection-content .purple { background: #6c63ff; }
+    .milk-collection-content .blue { background: #00bcd4; }
+    .milk-collection-content .green { background: #4caf50; }
+    .milk-collection-content .red { background: #f44336; }
+
+    .milk-collection-content .status {
+      padding: 4px 10px;
+      border-radius: 5px;
+      color: white;
+      font-size: 0.85rem;
+      text-align: center;
+    }
+
+    .milk-collection-content .status.active { background: #4caf50; }
+    .milk-collection-content .status.pending { background: #ff9800; }
+    .milk-collection-content .status.completed { background: #009688; }
+
+    .milk-collection-content .filters {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+
+    .milk-collection-content .filters input,
+    .milk-collection-content .filters select {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .milk-collection-content .btn {
+      background: #4caf50;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .milk-collection-content .btn:hover {
+      background: #43a047;
+    }
+
+    .milk-collection-content .quality-summary {
+      display: flex;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .milk-collection-content .quality-box {
+      flex: 1;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+
+    .milk-collection-content .bar-container {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .milk-collection-content .bar {
+      height: 20px;
+      border-radius: 5px;
+      margin-right: 10px;
+    }
+
+    .milk-collection-content .grade-a { background: #4caf50; }
+    .milk-collection-content .grade-b { background: #ffeb3b; }
+    .milk-collection-content .grade-c { background: #f44336; }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="top-section">
+    <div class="top-left">
+      <img src="https://www.google.com/u/0/ac/images/logo.gif?uid=102461851630621335199&service=google_gsuite" alt="ATS Logo" class="logo" />
+      <h2></h2>
+    </div>
+    <div class="top-center">
+      <div class="search-wrapper">
+        <input type="text" placeholder="Search..." class="search" />
+        <span class="search-icon">🔍</span>
+      </div>
+    </div>
+    <div class="top-right">
+      <span>🌙</span>
+      <span>🔔</span>
+      <div class="language">🌐 English ▼</div>
+      <div class="profile">
+        <img src="https://i.pravatar.cc/32" alt="Profile" />
+        <div>
+          <strong>John Doe</strong><br>
+          <span id="clock">00:00:00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Layout -->
+  <div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <ul class="menu">
+        <li class="active" data-section="dashboard">Dashboard</li>
+        <li data-section="farmer-management">Farmer Management</li>
+        <li data-section="milk-collection">Milk Collection</li>
+        <li data-section="chilling-centers">Chilling Centers</li>
+        <li data-section="processing-plants">Processing Plants</li>
+        <li data-section="quality-control">Quality Control</li>
+        <li data-section="product-inventory">Product Inventory</li>
+        <li data-section="distribution-logistics">Distribution & Logistics</li>
+        <li data-section="retail-franchise">Retail & Franchise</li>
+      </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+      <div class="filters">
+        <button class="active">Daily</button>
+        <button>Weekly</button>
+        <button>Monthly</button>
+        <button>Custom</button>
+      </div>
+
+      <!-- Dashboard Content -->
+      <div id="dashboard-content" class="section-content active">
+        <section class="cards">
+          <div class="card" data-card="milk-procurement">
+            <h3>Total Milk Procurement</h3>
+            <div class="chart-container"><canvas id="g1"></canvas></div>
+            <p class="value">250,000 L</p>
+            <p class="change up">↑ 12.5%</p>
+          </div>
+          <div class="card" data-card="sales-revenue">
+            <h3>Total Sales Revenue</h3>
+            <div class="chart-container"><canvas id="g2"></canvas></div>
+            <p class="value">₹1,500,000</p>
+            <p class="change up">↑ 18.2%</p>
+          </div>
+          <div class="card" data-card="active-farmers">
+            <h3>Active Farmers</h3>
+            <div class="chart-container"><canvas id="g3"></canvas></div>
+            <p class="value">5,000+</p>
+            <p class="change up">↑ 5.7%</p>
+          </div>
+          <div class="card" data-card="distributors">
+            <h3>Distributors/Retailers</h3>
+            <div class="chart-container"><canvas id="g4"></canvas></div>
+            <p class="value">1,200</p>
+            <p class="change up">↑ 8.3%</p>
+          </div>
+          <div class="card" data-card="customer-growth">
+            <h3>Customer Growth Rate</h3>
+            <div class="chart-container"><canvas id="g5"></canvas></div>
+            <p class="value">10%</p>
+            <p class="change up">↑ 20.3%</p>
+          </div>
+          <div class="card" data-card="quality-metrics">
+            <h3>Quality Metrics</h3>
+            <div class="chart-container"><canvas id="g6"></canvas></div>
+            <p class="value">95%</p>
+            <p class="change up">↑ 30%</p>
+          </div>
+          <div class="card" data-card="environmental-metrics">
+            <h3>Environmental Metrics</h3>
+            <div class="chart-container"><canvas id="g7"></canvas></div>
+            <p class="value">70%</p>
+            <p class="change up">↑ 16.7%</p>
+          </div>
+          <div class="card" data-card="employee-engagement">
+            <h3>Employee Engagement</h3>
+            <div class="chart-container"><canvas id="g8"></canvas></div>
+            <p class="value">85%</p>
+            <p class="change up">↑ 36.5%</p>
+          </div>
+        </section>
+      </div>
+
+      <!-- Farmer Management Content -->
+      <div id="farmer-management-content" class="section-content">
+        <h2>Farmer Management</h2>
+        <div class="stats">
+          <div class="stat-item">
+            <h3>Total Farmers</h3>
+            <p>5,250</p>
+          </div>
+          <div class="stat-item">
+            <h3>Active Today</h3>
+            <p>3,850</p>
+          </div>
+          <div class="stat-item">
+            <h3>New This Month</h3>
+            <p>120</p>
+          </div>
+          <div class="stat-item">
+            <h3>Avg. Milk/Farmer</h3>
+            <p>48.5L</p>
+          </div>
+        </div>
+        <p>This section provides comprehensive management of all registered farmers in the system. You can:</p>
+        <ul>
+          <li>View and edit farmer profiles</li>
+          <li>Track milk collection history</li>
+          <li>Process payments and incentives</li>
+          <li>Monitor farmer training programs</li>
+          <li>Generate reports on farmer performance</li>
+        </ul>
+        <div style="height: 300px; margin-top: 20px;">
+          <canvas id="farmerChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Milk Collection Content -->
+      <div id="milk-collection-content" class="section-content milk-collection-content">
+        <h2>Milk Collection</h2>
+        <div class="metrics">
+          <div class="metric purple">142<br>Total Suppliers</div>
+          <div class="metric blue">1,840L<br>Today's Collection</div>
+          <div class="metric green">A-<br>Avg. Quality</div>
+          <div class="metric red">₹84,500<br>Pending Payments</div>
+        </div>
+        <div class="tabs">
+          <div class="tab active" data-tab="suppliers-section">Suppliers</div>
+          <div class="tab" data-tab="milk-section">Milk Collection</div>
+          <div class="tab" data-tab="quality-section">Quality Control</div>
+          <div class="tab" data-tab="payments-section">Payments</div>
+        </div>
+        <div class="tab-content">
+          <div id="suppliers-section" class="tab-section active">
+            <h3>Supplier Management</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>SUPPLIER ID</th>
+                  <th>NAME</th>
+                  <th>CONTACT</th>
+                  <th>LOCATION</th>
+                  <th>COWS</th>
+                  <th>AVG. YIELD</th>
+                  <th>STATUS</th>
+                  <th>ACTIONS</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>SP-1001</td>
+                  <td><strong>Rajesh Patel</strong><br>Village A</td>
+                  <td>9876543210</td>
+                  <td>Village A</td>
+                  <td>5</td>
+                  <td>24.5L</td>
+                  <td><span class="status active">Active</span></td>
+                  <td><button class="btn">View</button></td>
+                </tr>
+                <tr>
+                  <td>SP-1002</td>
+                  <td><strong>Meena Sharma</strong><br>Village B</td>
+                  <td>8756432109</td>
+                  <td>Village B</td>
+                  <td>8</td>
+                  <td>38.2L</td>
+                  <td><span class="status active">Active</span></td>
+                  <td><button class="btn">View</button></td>
+                </tr>
+                <tr>
+                  <td>SP-1003</td>
+                  <td><strong>Vijay Kumar</strong><br>Village C</td>
+                  <td>7654321098</td>
+                  <td>Village C</td>
+                  <td>12</td>
+                  <td>52.7L</td>
+                  <td><span class="status pending">New</span></td>
+                  <td><button class="btn">View</button></td>
+                </tr>
+                <tr>
+                  <td>SP-1004</td>
+                  <td><strong>Sunita Devi</strong><br>Village A</td>
+                  <td>6543210987</td>
+                  <td>Village A</td>
+                  <td>6</td>
+                  <td>29.8L</td>
+                  <td><span class="status active">Active</span></td>
+                  <td><button class="btn">View</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div id="milk-section" class="tab-section">
+            <h3>Today's Milk Collection</h3>
+            <div class="filters">
+              <input type="date" value="2023-07-20">
+              <select>
+                <option>All Suppliers</option>
+                <option>Rajesh Patel (SP-1001)</option>
+                <option>Meena Sharma (SP-1002)</option>
+                <option>Vijay Kumar (SP-1003)</option>
+                <option>Sunita Devi (SP-1004)</option>
+              </select>
+              <select>
+                <option>All Grades</option>
+                <option>Grade A</option>
+                <option>Grade B</option>
+                <option>Grade C</option>
+              </select>
+              <button class="btn">+ Record Collection</button>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>TIME</th>
+                  <th>SUPPLIER</th>
+                  <th>VOLUME (L)</th>
+                  <th>FAT (%)</th>
+                  <th>SNF (%)</th>
+                  <th>TEMP (°C)</th>
+                  <th>QUALITY GRADE</th>
+                  <th>ACTIONS</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>08:15 AM</td>
+                  <td>Rajesh Patel (SP-1001)</td>
+                  <td>24.5</td>
+                  <td>4.2</td>
+                  <td>8.5</td>
+                  <td>4.5</td>
+                  <td><span class="status active">A</span></td>
+                  <td><button class="btn">View</button></td>
+                </tr>
+                <tr>
+                  <td>08:45 AM</td>
+                  <td>Meena Sharma (SP-1002)</td>
+                  <td>38.2</td>
+                  <td>4.0</td>
+                  <td>8.4</td>
+                  <td>4.2</td>
+                  <td><span class="status active">A</span></td>
+                  <td><button class="btn">View</button></td>
+                </tr>
+                <tr>
+                  <td>09:15 AM</td>
+                  <td>Vijay Kumar (SP-1003)</td>
+                  <td>52.7</td>
+                  <td>3.8</td>
+                  <td>8.2</td>
+                  <td>4.8</td>
+                  <td><span class="status pending">B</span></td>
+                  <td><button class="btn">View</button></td>
+                </tr>
+                <tr>
+                  <td>09:45 AM</td>
+                  <td>Sunita Devi (SP-1004)</td>
+                  <td>29.8</td>
+                  <td>3.6</td>
+                  <td>8.1</td>
+                  <td>5.0</td>
+                  <td><span class="status pending">B</span></td>
+                  <td><button class="btn">View</button></td>
+                </tr>
+                <tr>
+                  <td>10:15 AM</td>
+                  <td>New Supplier</td>
+                  <td>15.3</td>
+                  <td>3.2</td>
+                  <td>7.9</td>
+                  <td>5.5</td>
+                  <td><span class="status completed">C</span></td>
+                  <td><button class="btn">View</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div id="quality-section" class="tab-section">
+            <h3>Quality Control</h3>
+            <div class="quality-summary">
+              <div class="quality-box">
+                <h4>Quality Distribution</h4>
+                <div class="bar-container">
+                  <div class="bar grade-a" style="width: 45%;"></div>
+                  <span>45% Grade A</span>
+                </div>
+                <div class="bar-container">
+                  <div class="bar grade-b" style="width: 35%;"></div>
+                  <span>35% Grade B</span>
+                </div>
+                <div class="bar-container">
+                  <div class="bar grade-c" style="width: 20%;"></div>
+                  <span>20% Grade C</span>
+                </div>
+              </div>
+              <div class="quality-box">
+                <h4>Fat Content Analysis</h4>
+                <p><strong>3.9%</strong> Average Fat Content</p>
+                <p>0.2% Milk Rejected</p>
+                <p>35.4% Grade B</p>
+                <p>41.6% Grade A</p>
+              </div>
+            </div>
+            <h4>Quality Tests</h4>
+            <table>
+              <thead>
+                <tr>
+                  <th>SUPPLIER</th>
+                  <th>FAT (%)</th>
+                  <th>SNF (%)</th>
+                  <th>TEMP (°C)</th>
+                  <th>PH</th>
+                  <th>QUALITY</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Rajesh Patel</td>
+                  <td>4.2</td>
+                  <td>8.5</td>
+                  <td>4.5</td>
+                  <td>6.7</td>
+                  <td><span class="status active">A</span></td>
+                </tr>
+                <tr>
+                  <td>Meena Sharma</td>
+                  <td>4.0</td>
+                  <td>8.4</td>
+                  <td>4.2</td>
+                  <td>6.6</td>
+                  <td><span class="status active">A</span></td>
+                </tr>
+                <tr>
+                  <td>Vijay Kumar</td>
+                  <td>3.8</td>
+                  <td>8.2</td>
+                  <td>4.8</td>
+                  <td>6.5</td>
+                  <td><span class="status pending">B</span></td>
+                </tr>
+                <tr>
+                  <td>Sunita Devi</td>
+                  <td>3.6</td>
+                  <td>8.1</td>
+                  <td>5.0</td>
+                  <td>6.4</td>
+                  <td><span class="status pending">B</span></td>
+                </tr>
+                <tr>
+                  <td>New Supplier</td>
+                  <td>3.2</td>
+                  <td>7.9</td>
+                  <td>5.5</td>
+                  <td>6.3</td>
+                  <td><span class="status completed">C</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div id="payments-section" class="tab-section">
+            <h3>Payment Records</h3>
+            <div class="filters">
+              <input type="date" value="2023-07-01">
+              <input type="date" value="2023-07-20">
+              <select>
+                <option>All Suppliers</option>
+              </select>
+              <select>
+                <option>All Status</option>
+              </select>
+              <button class="btn">+ Record Payment</button>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>PAYMENT ID</th>
+                  <th>DATE</th>
+                  <th>SUPPLIER</th>
+                  <th>AMOUNT</th>
+                  <th>PERIOD</th>
+                  <th>METHOD</th>
+                  <th>STATUS</th>
+                  <th>ACTIONS</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>PY-2023-0719</td>
+                  <td>19 Jul 2023</td>
+                  <td>Rajesh Patel</td>
+                  <td>₹5,420</td>
+                  <td>15-19 Jul</td>
+                  <td>Bank Transfer</td>
+                  <td><span class="status completed">Completed</span></td>
+                  <td><button class="btn">View</button></td>
+                </tr>
+                <tr>
+                  <td>PY-2023-0718</td>
+                  <td>18 Jul 2023</td>
+                  <td>Meena Sharma</td>
+                  <td>₹3,280</td>
+                  <td>12-18 Jul</td>
+                  <td>UPI</td>
+                  <td><span class="status completed">Completed</span></td>
+                  <td><button class="btn">View</button></td>
+                </tr>
+                <tr>
+                  <td>PY-2023-0717</td>
+                  <td>17 Jul 2023</td>
+                  <td>Vijay Kumar</td>
+                  <td>₹11,560</td>
+                  <td>13-17 Jul</td>
+                  <td>Cash</td>
+                  <td><span class="status completed">Completed</span></td>
+                  <td><button class="btn">View</button></td>
+                </tr>
+                <tr>
+                  <td>PY-2023-0716</td>
+                  <td>16 Jul 2023</td>
+                  <td>Sunita Devi</td>
+                  <td>₹6,240</td>
+                  <td>12-16 Jul</td>
+                  <td>Bank Transfer</td>
+                  <td><span class="status completed">Completed</span></td>
+                  <td><button class="btn">View</button></td>
+                </tr>
+                <tr>
+                  <td>PY-2023-0715</td>
+                  <td>15 Jul 2023</td>
+                  <td>New Supplier</td>
+                  <td>₹3,120</td>
+                  <td>11-15 Jul</td>
+                  <td>Pending</td>
+                  <td><span class="status pending">Pending</span></td>
+                  <td><button class="btn">View</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chilling Centers Content -->
+      <div id="chilling-centers-content" class="section-content">
+        <h2>Chilling Centers</h2>
+        <div class="stats">
+          <div class="stat-item">
+            <h3>Total Centers</h3>
+            <p>12</p>
+          </div>
+          <div class="stat-item">
+            <h3>Total Capacity</h3>
+            <p>500,000 L</p>
+          </div>
+          <div class="stat-item">
+            <h3>Current Storage</h3>
+            <p>320,000 L</p>
+          </div>
+          <div class="stat-item">
+            <h3>Avg. Temperature</h3>
+            <p>4.2°C</p>
+          </div>
+        </div>
+        <p>Manage your chilling center operations and monitor storage conditions:</p>
+        <ul>
+          <li>Real-time temperature monitoring</li>
+          <li>Storage capacity utilization</li>
+          <li>Maintenance schedules</li>
+          <li>Transfer to processing plants</li>
+          <li>Energy consumption tracking</li>
+        </ul>
+        <div style="height: 300px; margin-top: 20px;">
+          <canvas id="chillingChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Processing Plants Content -->
+     <div id="processing-plants-content" class="section-content">
+  <h2>Processing Plants</h2>
+  <div class="stats" id="statsContainer">
+    <div class="stat-item" onclick="showDetails('totalPlants')" style="background: #28a745; color: white;">
+      <h3>Total Plants</h3>
+      <p>3</p>
+    </div>
+    <div class="stat-item" onclick="showDetails('dailyProcessing')" style="background: #007bff; color: white;">
+      <h3>Daily Processing</h3>
+      <p>180,000 L</p>
+    </div>
+    <div class="stat-item" onclick="showDetails('productTypes')" style="background: #dc3545; color: white;">
+      <h3>Product Types</h3>
+      <p>15</p>
+    </div>
+    <div class="stat-item" onclick="showDetails('efficiency')" style="background: #ffc107; color: black;">
+      <h3>Efficiency</h3>
+      <p>92%</p>
+    </div>
+  </div>
+  <p>Oversee milk processing operations and production metrics:</p>
+  <ul>
+    <li>Production line monitoring</li>
+    <li>Batch processing tracking</li>
+    <li>Equipment maintenance</li>
+    <li>Staff scheduling</li>
+    <li>Quality control checks</li>
+  </ul>
+  <h3>Plant Details</h3>
+  <table id="plantTable">
+    <thead>
+      <tr>
+        <th>Plant</th>
+        <th>Location</th>
+        <th>Daily Capacity (L)</th>
+        <th>Product Types</th>
+        <th>Efficiency</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr onclick="highlightRow(this, 'Plant A')">
+        <td>Plant A</td>
+        <td>North Valley</td>
+        <td>60,000</td>
+        <td>8</td>
+        <td>93%</td>
+      </tr>
+      <tr onclick="highlightRow(this, 'Plant B')">
+        <td>Plant B</td>
+        <td>East Hills</td>
+        <td>70,000</td>
+        <td>10</td>
+        <td>91%</td>
+      </tr>
+      <tr onclick="highlightRow(this, 'Plant C')">
+        <td>Plant C</td>
+        <td>South Plains</td>
+        <td>50,000</td>
+        <td>7</td>
+        <td>92%</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="controls" style="margin: 20px 0;">
+    <button id="productionSummaryBtn">Production Summary</button>
+    <button id="qualityControlBtn">Quality Control Report</button>
+  </div>
+  <div class="chart-container">
+    <canvas id="processingChart"></canvas>
+  </div>
+  <div id="detailsContainer" style="margin-top: 20px; display: none;">
+    <h3>Details</h3>
+    <div id="dynamicDetailsSection" class="hidden"></div>
+  </div>
+</div>
+
+<style>
+  .section-content {
+    font-family: Arial, sans-serif;
+    max-width: 1000px; /* Consistent width */
+    margin: 0 auto; /* Center content */
+    padding: 20px;
+  }
+  .stats {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 20px;
+    width: 100%;
+  }
+  .stat-item {
+    flex: 1;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s, opacity 0.2s;
+  }
+  .stat-item:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+  .controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+  }
+  .controls button {
+    padding: 10px 20px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .controls button:hover {
+    background: #0056b3;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  th {
+    background: #007bff;
+    color: white;
+  }
+  tr:nth-child(even) {
+    background: #f8f9fa;
+  }
+  tr:hover {
+    background: #e9ecef;
+    cursor: pointer;
+  }
+  tr.highlighted {
+    background: #d1e7ff !important;
+  }
+  .chart-container {
+    height: 300px;
+    width: 100%;
+    margin-top: 20px;
+  }
+  .hidden {
+    display: none;
+  }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  let processingChart;
+
+  const chartData = {
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    datasets: [{
+      label: 'Processing Volume (L)',
+      data: [150000, 160000, 170000, 175000, 180000, 185000],
+      backgroundColor: 'rgba(0, 123, 255, 0.5)',
+      borderColor: 'rgba(0, 123, 255, 1)',
+      borderWidth: 1
+    }]
+  };
+
+  function initChart() {
+    const ctx = document.getElementById('processingChart').getContext('2d');
+    processingChart = new Chart(ctx, {
+      type: 'bar',
+      data: chartData,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          tooltip: {
+            enabled: true,
+            callbacks: {
+              label: function(context) {
+                return `${context.dataset.label}: ${context.parsed.y.toLocaleString()} L`;
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: 'Volume (Liters)' }
+          }
+        }
+      }
+    });
+  }
+
+  function showDetails(type) {
+    const detailsContainer = document.getElementById('detailsContainer');
+    const dynamicDetailsSection = document.getElementById('dynamicDetailsSection');
+    let details = '';
+
+    switch(type) {
+      case 'totalPlants':
+        details = 'Three processing plants located in strategic regions to optimize distribution.';
+        break;
+      case 'dailyProcessing':
+        details = 'Processing capacity of 180,000 liters per day across all facilities.';
+        break;
+      case 'productTypes':
+        details = '15 unique dairy products including milk, cheese, yogurt, and butter.';
+        break;
+      case 'efficiency':
+        details = '92% operational efficiency achieved through automated systems and quality controls.';
+        break;
+    }
+
+    dynamicDetailsSection.innerHTML = `<p class="text-gray-700">${details}</p>`;
+    dynamicDetailsSection.classList.remove('hidden');
+    detailsContainer.style.display = 'block';
+  }
+
+  function highlightRow(row, plantName) {
+    clearHighlightedRows();
+    row.classList.add('highlighted');
+    showDetails('plant' + plantName.replace(/\s/g, ''));
+  }
+
+  function clearHighlightedRows() {
+    const rows = document.querySelectorAll('#plantTable tr');
+    rows.forEach(row => row.classList.remove('highlighted'));
+  }
+
+  // Production Summary Button Handler
+  const productionSummaryBtn = document.getElementById('productionSummaryBtn');
+  if (productionSummaryBtn) {
+    productionSummaryBtn.addEventListener('click', () => {
+      const dynamicDetailsSection = document.getElementById('dynamicDetailsSection');
+      dynamicDetailsSection.innerHTML = ''; // Clear previous content
+      dynamicDetailsSection.classList.remove('hidden'); // Ensure section is visible
+      document.getElementById('detailsContainer').style.display = 'block';
+
+      dynamicDetailsSection.innerHTML = `
+        <h4 class="text-xl font-semibold text-indigo-800 mb-4 text-center">Overall Production Summary</h4>
+        <div class="bg-white p-4 rounded-lg shadow-sm text-gray-700 mb-4">
+          <p class="mb-2">This summary provides an overview of total production volumes across all plants.</p>
+          <p><strong>Total Production YTD:</strong> 1,500,000 L</p>
+        </div>
+        <h5 class="text-lg font-semibold text-gray-700 mb-2">Quarterly Production Volume (L)</h5>
+        <table class="min-w-full bg-white border border-gray-200 rounded-md mb-4">
+          <thead>
+            <tr>
+              <th class="py-2 px-4 border-b">Quarter</th>
+              <th class="py-2 px-4 border-b">Volume (L)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="py-2 px-4 border-b">Q1 2024</td><td class="py-2 px-4 border-b">450,000</td></tr>
+            <tr><td class="py-2 px-4 border-b">Q2 2024</td><td class="py-2 px-4 border-b">520,000</td></tr>
+            <tr><td class="py-2 px-4 border-b">Q3 2024</td><td class="py-2 px-4 border-b">530,000</td></tr>
+            <tr><td class="py-2 px-4 border-b">Q4 2024 (Est.)</td><td class="py-2 px-4 border-b">550,000</td></tr>
+          </tbody>
+        </table>
+        <h5 class="text-lg font-semibold text-gray-700 mb-2">Quarterly Production Trend</h5>
+        <div style="height: 250px;"><canvas id="quarterlyProductionChart"></canvas></div>
+      `;
+
+      setTimeout(() => {
+        const ctx = document.getElementById('quarterlyProductionChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['Q1 2024', 'Q2 2024', 'Q3 2024', 'Q4 2024 (Est.)'],
+            datasets: [{
+              label: 'Production Volume (L)',
+              data: [450000, 520000, 530000, 550000],
+              borderColor: 'rgb(102, 51, 153)',
+              backgroundColor: 'rgba(102, 51, 153, 0.2)',
+              tension: 0.3,
+              fill: true
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: { beginAtZero: true, title: { display: true, text: 'Volume (L)' } },
+              x: { title: { display: true, text: 'Quarter' } }
+            },
+            plugins: {
+              legend: { display: true },
+              title: { display: true, text: 'Quarterly Production Trend' }
+            }
+          }
+        });
+      }, 50);
+    });
+  }
+
+  // Quality Control Button Handler
+  const qualityControlBtn = document.getElementById('qualityControlBtn');
+  if (qualityControlBtn) {
+    qualityControlBtn.addEventListener('click', () => {
+      const dynamicDetailsSection = document.getElementById('dynamicDetailsSection');
+      dynamicDetailsSection.innerHTML = ''; // Clear previous content
+      dynamicDetailsSection.classList.remove('hidden'); // Ensure section is visible
+      document.getElementById('detailsContainer').style.display = 'block';
+
+      dynamicDetailsSection.innerHTML = `
+        <h4 class="text-xl font-semibold text-red-800 mb-4 text-center">Quality Control Report</h4>
+        <div class="bg-white p-4 rounded-lg shadow-sm text-gray-700 mb-4">
+          <p class="mb-2">This report summarizes key quality control metrics and recent inspection findings.</p>
+          <p><strong>Overall Pass Rate:</strong> 98.5%</p>
+          <p><strong>Last Audit Date:</strong> 2025-05-20</p>
+        </div>
+        <h5 class="text-lg font-semibold text-gray-700 mb-2">Recent Inspection Results</h5>
+        <table class="min-w-full bg-white border border-gray-200 rounded-md mb-4">
+          <thead>
+            <tr>
+              <th class="py-2 px-4 border-b">Batch ID</th>
+              <th class="py-2 px-4 border-b">Product</th>
+              <th class="py-2 px-4 border-b">Status</th>
+              <th class="py-2 px-4 border-b">Defects</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="py-2 px-4 border-b">B20250525-001</td><td class="py-2 px-4 border-b">Milk (Whole)</td><td class="py-2 px-4 border-b text-green-600">Passed</td><td class="py-2 px-4 border-b">None</td></tr>
+            <tr><td class="py-2 px-4 border-b">B20250524-005</td><td class="py-2 px-4 border-b">Yogurt (Plain)</td><td class="py-2 px-4 border-b text-green-600">Passed</td><td class="py-2 px-4 border-b">None</td></tr>
+            <tr><td class="py-2 px-4 border-b">B20250523-010</td><td class="py-2 px-4 border-b">Orange Juice</td><td class="py-2 px-4 border-b text-red-600">Failed</td><td class="py-2 px-4 border-b">High Acidity</td></tr>
+            <tr><td class="py-2 px-4 border-b">B20250522-003</td><td class="py-2 px-4 border-b">Cheese (Cheddar)</td><td class="py-2 px-4 border-b text-green-600">Passed</td><td class="py-2 px-4 border-b">None</td></tr>
+          </tbody>
+        </table>
+        <h5 class="text-lg font-semibold text-gray-700 mb-2">Defect Categories (Last 30 Days)</h5>
+        <div style="height: 250px;"><canvas id="defectCategoriesChart"></canvas></div>
+      `;
+
+      setTimeout(() => {
+        const ctx = document.getElementById('defectCategoriesChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'pie',
+          data: {
+            labels: ['Packaging', 'Flavor/Taste', 'Consistency', 'Contamination', 'Other'],
+            datasets: [{
+              data: [15, 10, 5, 2, 3],
+              backgroundColor: [
+                'rgba(255, 99, 132, 0.7)', // Red
+                'rgba(54, 162, 235, 0.7)', // Blue
+                'rgba(255, 206, 86, 0.7)', // Yellow
+                'rgba(75, 192, 192, 0.7)', // Green
+                'rgba(153, 102, 255, 0.7)' // Purple
+              ],
+              borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)'
+              ],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'right' },
+              title: { display: true, text: 'Defect Categories' }
+            }
+          }
+        });
+      }, 50);
+    });
+  }
+
+  // Initialize chart on page load
+  window.onload = initChart;
+</script>
+      <!-- Quality Control Content -->
+      <div id="quality-control-content" class="section-content">
+        <h2>Quality Control</h2>
+        <p>Quality assurance metrics and testing results for dairy products to ensure compliance with safety standards.</p>
+        <div class="cards">
+          <div class="card">
+            <h3>Last Inspection Date</h3>
+            <p>May 12, 2025</p>
+          </div>
+          <div class="card">
+            <h3>Passed Tests</h3>
+            <p>96%</p>
+          </div>
+          <div class="card">
+            <h3>Critical Issues</h3>
+            <p>1</p>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Result</th>
+              <th>Acceptable Range</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Fat Content</td>
+              <td>3.6%</td>
+              <td>3.5% - 4.0%</td>
+              <td class="status-pass">Pass</td>
+            </tr>
+            <tr>
+              <td>Acidity</td>
+              <td>0.17%</td>
+              <td>0.14% - 0.18%</td>
+              <td class="status-borderline">Borderline</td>
+            </tr>
+            <tr>
+              <td>Protein Level</td>
+              <td>3.2%</td>
+              <td>3.0% - 3.5%</td>
+              <td class="status-pass">Pass</td>
+            </tr>
+            <tr>
+              <td>Microbial Count</td>
+              <td>1200 CFU/ml</td>
+              <td>1500 CFU/ml</td>
+              <td class="status-pass">Pass</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="chart-container">
+          <canvas id="qualityControlChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Product Inventory Content -->
+      <div id="product-inventory-content" class="section-content">
+        <h2>Product Inventory</h2>
+        <p>Stock levels and product management ensuring optimal supply chain flow.</p>
+        <div class="cards">
+          <div class="card">
+            <h3>Total Stock</h3>
+            <p>8600 kg / liters</p>
+          </div>
+          <div class="card">
+            <h3>Low Stock Alerts</h3>
+            <p>2 Products</p>
+          </div>
+          <div class="card">
+            <h3>Last Restock</h3>
+            <p>May 10, 2025</p>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Quantity</th>
+              <th>Unit</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Milk Powder</td>
+              <td>450</td>
+              <td>kg</td>
+              <td class="status-pass">Sufficient</td>
+            </tr>
+            <tr>
+              <td>Butter</td>
+              <td>120</td>
+              <td>kg</td>
+              <td class="status-fail">Low Stock</td>
+            </tr>
+            <tr>
+              <td>Cheese</td>
+              <td>90</td>
+              <td>kg</td>
+              <td class="status-pass">Sufficient</td>
+            </tr>
+            <tr>
+              <td>Yogurt</td>
+              <td>200</td>
+              <td>liters</td>
+              <td class="status-pass">Sufficient</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="chart-container">
+          <canvas id="productInventoryChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Distribution & Logistics Content -->
+      <div id="distribution-logistics-content" class="section-content">
+        <h2>Distribution & Logistics</h2>
+        <p>Delivery tracking and fleet management ensuring timely distribution of products.</p>
+        <div class="cards">
+          <div class="card">
+            <h3>Total Routes</h3>
+            <p>15</p>
+          </div>
+          <div class="card">
+            <h3>On-Time Deliveries</h3>
+            <p>13 (87%)</p>
+          </div>
+          <div class="card">
+            <h3>Delayed Deliveries</h3>
+            <p>2 (13%)</p>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Route</th>
+              <th>Status</th>
+              <th>Last Delivery</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>North Zone</td>
+              <td class="status-pass">Completed</td>
+              <td>May 13, 2025</td>
+              <td>No issues</td>
+            </tr>
+            <tr>
+              <td>East Zone</td>
+              <td class="status-borderline">Pending</td>
+              <td>-</td>
+              <td>Weather delay</td>
+            </tr>
+            <tr>
+              <td>South Zone</td>
+              <td class="status-pass">Completed</td>
+              <td>May 12, 2025</td>
+              <td>No issues</td>
+            </tr>
+            <tr>
+              <td>West Zone</td>
+              <td class="status-fail">Delayed</td>
+              <td>May 10, 2025</td>
+              <td>Mechanical failure</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="chart-container">
+          <canvas id="distributionLogisticsChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Retail & Franchise Content -->
+      <div id="retail-franchise-content" class="section-content">
+        <h2>Retail & Franchise</h2>
+        <p>Retail outlet performance and franchise management overview.</p>
+        <div class="cards">
+          <div class="card">
+            <h3>Total Outlets</h3>
+            <p>25</p>
+          </div>
+          <div class="card">
+            <h3>Monthly Sales Growth</h3>
+            <p>5%</p>
+          </div>
+          <div class="card">
+            <h3>Top Performing Outlet</h3>
+            <p>Downtown Branch</p>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Location</th>
+              <th>Sales (USD)</th>
+              <th>Month</th>
+              <th>Growth %</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>City Center</td>
+              <td>$12,000</td>
+              <td>April</td>
+              <td>4.5%</td>
+            </tr>
+            <tr>
+              <td>Suburb</td>
+              <td>$8,500</td>
+              <td>April</td>
+              <td>5.0%</td>
+            </tr>
+            <tr>
+              <td>Airport</td>
+              <td>$9,700</td>
+              <td>April</td>
+              <td>6.2%</td>
+            </tr>
+            <tr>
+              <td>Downtown</td>
+              <td>$15,200</td>
+              <td>April</td>
+              <td>7.0%</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="chart-container">
+          <canvas id="retailFranchiseChart"></canvas>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Clock functionality
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('clock').textContent = now.toLocaleTimeString('en-GB');
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Gauge chart creation function
+    function createGauge(id, value, color) {
+      const canvas = document.getElementById(id);
+      if (!canvas) {
+        console.error(`Canvas with ID ${id} not found`);
+        return;
+      }
+      return new Chart(canvas, {
+        type: 'doughnut',
+        data: {
+          datasets: [{
+            data: [value, 100 - value],
+            backgroundColor: [color, '#f0f0f0'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          cutout: '70%',
+          plugins: {
+            legend: { display: false },
+            tooltip: { enabled: false }
+          }
+        }
+      });
+    }
+
+    // Initialize all charts and sidebar functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      // Dashboard gauges
+      ['g1', 'g2', 'g3', 'g4', 'g5', 'g6', 'g7', 'g8'].forEach((id, index) => {
+        const values = [70, 75, 60, 65, 50, 95, 70, 85];
+        const colors = ['#ff9800', '#ff5722', '#2196f3', '#3f51b5', '#4caf50', '#00bcd4', '#9c27b0', '#e91e63'];
+        createGauge(id, values[index], colors[index]);
+      });
+
+      // Farmer Management Chart
+      const farmerChart = document.getElementById('farmerChart');
+      if (farmerChart) {
+        new Chart(farmerChart, {
+          type: 'bar',
+          data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+              label: 'Active Farmers',
+              data: [4200, 4500, 4700, 4900, 5000, 5100],
+              backgroundColor: '#4caf50'
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              y: { beginAtZero: true }
+            }
+          }
+        });
+      }
+
+      // Chilling Centers Chart
+      const chillingChart = document.getElementById('chillingChart');
+      if (chillingChart) {
+        new Chart(chillingChart, {
+          type: 'pie',
+          data: {
+            labels: ['Center 1', 'Center 2', 'Center 3', 'Others'],
+            datasets: [{
+              data: [80000, 75000, 70000, 95000],
+              backgroundColor: ['#ff9800', '#ff5722', '#2196f3', '#4caf50']
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { position: 'bottom' } }
+          }
+        });
+      }
+
+      // Processing Plants Chart
+      const processingChart = document.getElementById('processingChart');
+      if (processingChart) {
+        new Chart(processingChart, {
+          type: 'radar',
+          data: {
+            labels: ['Pasteurization', 'Homogenization', 'Packaging', 'Quality', 'Efficiency', 'Output'],
+            datasets: [{
+              label: 'Plant Performance',
+              data: [95, 92, 90, 97, 88, 94],
+              backgroundColor: 'rgba(0, 151, 208, 0.2)',
+              borderColor: '#0097d0'
+            }]
+          },
+          options: {
+            responsive: true
+          }
+        });
+      }
+
+      // Quality Control Chart
+      const qcChart = document.getElementById('qualityControlChart');
+      if (qcChart) {
+        new Chart(qcChart, {
+          type: 'bar',
+          data: {
+            labels: ['Fat Content', 'Acidity', 'Protein Level', 'Microbial Count'],
+            datasets: [{
+              label: 'Compliance %',
+              data: [100, 85, 95, 90],
+              backgroundColor: ['#4caf50', '#ff9800', '#4caf50', '#4caf50'],
+              borderRadius: 5
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              y: { beginAtZero: true, max: 100, ticks: { stepSize: 20 }, title: { display: true, text: 'Compliance (%)' } }
+            },
+            plugins: { legend: { display: false } }
+          }
+        });
+      }
+
+      // Product Inventory Chart
+      const piChart = document.getElementById('productInventoryChart');
+      if (piChart) {
+        new Chart(piChart, {
+          type: 'pie',
+          data: {
+            labels: ['Milk Powder', 'Butter', 'Cheese', 'Yogurt'],
+            datasets: [{
+              label: 'Stock Quantity',
+              data: [450, 120, 90, 200],
+              backgroundColor: ['#81c784', '#f44336', '#4db6ac', '#ffb74d'],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { position: 'bottom' } }
+          }
+        });
+      }
+
+      // Distribution & Logistics Chart
+      const dlChart = document.getElementById('distributionLogisticsChart');
+      if (dlChart) {
+        new Chart(dlChart, {
+          type: 'line',
+          data: {
+            labels: ['May 10', 'May 11', 'May 12', 'May 13', 'May 14', 'May 15'],
+            datasets: [
+              {
+                label: 'On-Time Deliveries',
+                data: [3, 2, 3, 4, 5, 4],
+                borderColor: '#4caf50',
+                backgroundColor: 'rgba(76, 175, 80, 0.3)',
+                fill: true,
+                tension: 0.3,
+                pointRadius: 5,
+                pointHoverRadius: 7
+              },
+              {
+                label: 'Delayed Deliveries',
+                data: [1, 2, 0, 1, 0, 1],
+                borderColor: '#f44336',
+                backgroundColor: 'rgba(244, 67, 54, 0.3)',
+                fill: true,
+                tension: 0.3,
+                pointRadius: 5,
+                pointHoverRadius: 7
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              y: { beginAtZero: true, title: { display: true, text: 'Number of Deliveries' }, ticks: { stepSize: 1 } }
+            }
+          }
+        });
+      }
+
+      // Retail & Franchise Chart
+      const rfChart = document.getElementById('retailFranchiseChart');
+      if (rfChart) {
+        new Chart(rfChart, {
+          type: 'bar',
+          data: {
+            labels: ['City Center', 'Suburb', 'Airport', 'Downtown'],
+            datasets: [{
+              label: 'Growth %',
+              data: [4.5, 5.0, 6.2, 7.0],
+              backgroundColor: ['#2196f3', '#64b5f6', '#42a5f5', '#1e88e5'],
+              borderRadius: 5
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              y: { beginAtZero: true, max: 10, ticks: { stepSize: 1 }, title: { display: true, text: 'Growth Percentage' } }
+            },
+            plugins: { legend: { display: false } }
+          }
+        });
+      }
+
+      // Sidebar navigation functionality
+      const menuItems = document.querySelectorAll('.sidebar .menu li');
+      const sections = document.querySelectorAll('.section-content');
+
+      menuItems.forEach(item => {
+        item.addEventListener('click', function() {
+          menuItems.forEach(i => i.classList.remove('active'));
+          sections.forEach(s => s.classList.remove('active'));
+          this.classList.add('active');
+          const sectionId = this.getAttribute('data-section') + '-content';
+          const section = document.getElementById(sectionId);
+          if (section) {
+            section.classList.add('active');
+          } else {
+            console.error(`Section with ID ${sectionId} not found`);
+          }
+        });
+      });
+
+      // Milk Collection tab functionality
+      const tabs = document.querySelectorAll('.milk-collection-content .tab');
+      const tabSections = document.querySelectorAll('.milk-collection-content .tab-section');
+
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          tabs.forEach(t => t.classList.remove('active'));
+          tabSections.forEach(s => s.classList.remove('active'));
+          tab.classList.add('active');
+          const sectionId = tab.getAttribute('data-tab');
+          const section = document.getElementById(sectionId);
+          if (section) {
+            section.classList.add('active');
+          } else {
+            console.error(`Tab section with ID ${sectionId} not found`);
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
